@@ -24,7 +24,7 @@ export const TodosHeader: FC<Props> = props => {
   const inputTitleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (inputTitleRef.current && !isTempTodo) {
+    if (inputTitleRef.current) {
       inputTitleRef.current.focus();
     }
   }, [isTempTodo, todosLength]);

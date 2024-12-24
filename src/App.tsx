@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useMemo } from 'react';
+import { FC, useState, useEffect, useMemo, useCallback } from 'react';
 import { USER_ID, getTodos, addTodo, deleteTodo } from './api/todos';
 import { Todo } from './types/Todo';
 import { ErrorMessage } from './types/ErrorMessage';
@@ -41,6 +41,16 @@ export const App: FC = () => {
     });
   }, [todos, filterValue]);
 
+  const completedTodos = useMemo(
+    () => todos.filter(todo => todo.completed),
+    [todos],
+  );
+
+  const activeTodosQuantity = useMemo(
+    () => todos.length - completedTodos.length,
+    [completedTodos, todos],
+  );
+
   const addNewTodoHandler = async (title: string) => {
     setErrorMessage(null);
     setTempTodo({ title, id: 0, completed: false, userId: USER_ID });
@@ -56,7 +66,8 @@ export const App: FC = () => {
     }
   };
 
-  const deleteTodoHandler = async (todoId: number) => {
+  const deleteTodoHandler = useCallback(async (todoId: number) => {
+    setErrorMessage(null);
     setTodoIdsToDel(prevIds => [...prevIds, todoId]);
     try {
       await deleteTodo(todoId);
@@ -67,7 +78,13 @@ export const App: FC = () => {
     } finally {
       setTodoIdsToDel(prevIds => prevIds.filter(id => id !== todoId));
     }
-  };
+  }, []);
+
+  const clearCompleted = useCallback(() => {
+    completedTodos.forEach(todo => {
+      return deleteTodoHandler(todo.id);
+    });
+  }, [completedTodos, deleteTodoHandler]);
 
   return (
     <div className="todoapp">
@@ -77,7 +94,7 @@ export const App: FC = () => {
         <TodosHeader
           addNewTodoHandler={addNewTodoHandler}
           setErrorMessage={setErrorMessage}
-          isTempTodo={Boolean(tempTodo)}
+          isTempTodo={!!tempTodo}
           todosLength={todos.length}
         />
 
@@ -92,8 +109,9 @@ export const App: FC = () => {
             <TodosFooter
               filterValue={filterValue}
               setFilterValue={setFilterValue}
-              todos={todos}
-              deleteTodoHandler={deleteTodoHandler}
+              hasCompleted={!!completedTodos.length}
+              clearCompleted={clearCompleted}
+              activeTodosQuantity={activeTodosQuantity}
             />
           </>
         )}

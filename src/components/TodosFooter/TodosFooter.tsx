@@ -1,38 +1,23 @@
-import { FC, Dispatch, SetStateAction, useMemo, useCallback } from 'react';
+import { FC, Dispatch, SetStateAction } from 'react';
 import { StatusFilter } from '../../types/StatusFilter';
-import { Todo } from '../../types/Todo';
 import { TodoFilter } from '../TodoFilter';
 
 type Props = {
   filterValue: StatusFilter;
   setFilterValue: Dispatch<SetStateAction<StatusFilter>>;
-  todos: Todo[];
-  deleteTodoHandler: (todoId: number) => Promise<void>;
+  hasCompleted: boolean;
+  clearCompleted: () => void;
+  activeTodosQuantity: number;
 };
 
 export const TodosFooter: FC<Props> = props => {
-  const { filterValue, setFilterValue, todos, deleteTodoHandler } = props;
-
-  const completedTodos = useMemo(
-    () => todos.filter(todo => todo.completed),
-    [todos],
-  );
-
-  const activeTodosQuantity = useMemo(
-    () => todos.length - completedTodos.length,
-    [completedTodos, todos],
-  );
-
-  const hasCompleted = useMemo(
-    () => Boolean(completedTodos.length),
-    [completedTodos],
-  );
-
-  const clearCompleted = useCallback(() => {
-    completedTodos.forEach(todo => {
-      return deleteTodoHandler(todo.id);
-    });
-  }, [completedTodos, deleteTodoHandler]);
+  const {
+    filterValue,
+    setFilterValue,
+    hasCompleted,
+    clearCompleted,
+    activeTodosQuantity,
+  } = props;
 
   return (
     <footer className="todoapp__footer" data-cy="Footer">

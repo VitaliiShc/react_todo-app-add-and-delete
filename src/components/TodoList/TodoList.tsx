@@ -22,6 +22,7 @@ export const TodoList: FC<Props> = props => {
           isLoading={todoIdsToDel.includes(todo.id)}
         />
       ))}
+
       {tempTodo && (
         <TodoItem
           todo={tempTodo}
