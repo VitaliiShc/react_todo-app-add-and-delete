@@ -1,34 +1,35 @@
-import React, {
+import {
+  FC,
   useState,
   Dispatch,
   SetStateAction,
   useRef,
   useEffect,
+  FormEvent,
 } from 'react';
-import { ErrorMessage } from '../../types/ErrorMessage';
 import { trimString } from '../../utils/trimString';
-import { Todo } from '../../types/Todo';
+import { ErrorMessage } from '../../types/ErrorMessage';
 
 type Props = {
   addNewTodoHandler: (value: string) => Promise<void>;
   setErrorMessage: Dispatch<SetStateAction<ErrorMessage | null>>;
-  tempTodo: Todo | null;
+  isTempTodo: boolean;
+  todosLength: number;
 };
 
-export const TodosHeader: React.FC<Props> = props => {
-  const { addNewTodoHandler, setErrorMessage, tempTodo } = props;
+export const TodosHeader: FC<Props> = props => {
+  const { addNewTodoHandler, setErrorMessage, todosLength, isTempTodo } = props;
 
+  const [inputValue, setInputValue] = useState('');
   const inputTitleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (inputTitleRef.current && !tempTodo) {
+    if (inputTitleRef.current && !isTempTodo) {
       inputTitleRef.current.focus();
     }
-  }, [tempTodo]);
+  }, [isTempTodo, todosLength]);
 
-  const [inputValue, setInputValue] = useState('');
-
-  const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     if (!trimString(inputValue)) {
@@ -64,7 +65,7 @@ export const TodosHeader: React.FC<Props> = props => {
           value={inputValue}
           onChange={evt => setInputValue(evt.target.value)}
           ref={inputTitleRef}
-          disabled={!!tempTodo}
+          disabled={isTempTodo}
         />
       </form>
     </header>

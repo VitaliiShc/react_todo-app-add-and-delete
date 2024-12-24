@@ -1,13 +1,13 @@
-import React, { Dispatch, SetStateAction, useEffect } from 'react';
-import { ErrorMessage } from '../../types/ErrorMessage';
+import { FC, Dispatch, SetStateAction, useEffect } from 'react';
 import classNames from 'classnames';
+import { ErrorMessage } from '../../types/ErrorMessage';
 
 type Props = {
   errorMessage: ErrorMessage | null;
   setErrorMessage: Dispatch<SetStateAction<ErrorMessage | null>>;
 };
 
-export const ErrorNotification: React.FC<Props> = props => {
+export const ErrorNotification: FC<Props> = props => {
   const { errorMessage, setErrorMessage } = props;
 
   useEffect(() => {

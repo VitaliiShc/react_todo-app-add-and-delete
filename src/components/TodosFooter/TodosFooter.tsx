@@ -1,7 +1,7 @@
-import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
-import { TodoFilter } from '../TodoFilter';
+import { FC, Dispatch, SetStateAction, useMemo, useCallback } from 'react';
 import { StatusFilter } from '../../types/StatusFilter';
 import { Todo } from '../../types/Todo';
+import { TodoFilter } from '../TodoFilter';
 
 type Props = {
   filterValue: StatusFilter;
@@ -10,7 +10,7 @@ type Props = {
   deleteTodoHandler: (todoId: number) => Promise<void>;
 };
 
-export const TodosFooter: React.FC<Props> = props => {
+export const TodosFooter: FC<Props> = props => {
   const { filterValue, setFilterValue, todos, deleteTodoHandler } = props;
 
   const completedTodos = useMemo(

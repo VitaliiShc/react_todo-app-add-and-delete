@@ -1,6 +1,6 @@
-import React from 'react';
-import { TodoItem } from '../TodoItem';
+import { FC } from 'react';
 import { Todo } from '../../types/Todo';
+import { TodoItem } from '../TodoItem';
 
 type Props = {
   todos: Todo[];
@@ -9,7 +9,7 @@ type Props = {
   todoIdsToDel: number[];
 };
 
-export const TodoList: React.FC<Props> = props => {
+export const TodoList: FC<Props> = props => {
   const { todos, tempTodo, deleteTodoHandler, todoIdsToDel } = props;
 
   return (

@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { FC, useState, useEffect, useMemo } from 'react';
+import { USER_ID, getTodos, addTodo, deleteTodo } from './api/todos';
+import { Todo } from './types/Todo';
+import { ErrorMessage } from './types/ErrorMessage';
+import { StatusFilter } from './types/StatusFilter';
 import { TodosHeader } from './components/TodosHeader';
 import { TodoList } from './components/TodoList';
 import { TodosFooter } from './components/TodosFooter';
 import { ErrorNotification } from './components/ErrorNotification';
-import { Todo } from './types/Todo';
-import { getTodos, addTodo, USER_ID, deleteTodo } from './api/todos';
-import { ErrorMessage } from './types/ErrorMessage';
-import { StatusFilter } from './types/StatusFilter';
 
-export const App: React.FC = () => {
+export const App: FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [errorMessage, setErrorMessage] = useState<ErrorMessage | null>(null);
   const [filterValue, setFilterValue] = useState<StatusFilter>(
@@ -16,6 +16,16 @@ export const App: React.FC = () => {
   );
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const [todoIdsToDel, setTodoIdsToDel] = useState<number[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setTodos(await getTodos());
+      } catch (err) {
+        setErrorMessage(ErrorMessage.LoadError);
+      }
+    })();
+  }, []);
 
   const filteredTodos = useMemo(() => {
     return todos.filter(todo => {
@@ -32,10 +42,12 @@ export const App: React.FC = () => {
   }, [todos, filterValue]);
 
   const addNewTodoHandler = async (title: string) => {
+    setErrorMessage(null);
     setTempTodo({ title, id: 0, completed: false, userId: USER_ID });
     try {
-      await addTodo(title);
-      setTodos(await getTodos());
+      const data = await addTodo(title);
+
+      setTodos(prevTodos => [...prevTodos, data]);
     } catch (err) {
       setErrorMessage(ErrorMessage.AddError);
       throw err;
@@ -48,7 +60,7 @@ export const App: React.FC = () => {
     setTodoIdsToDel(prevIds => [...prevIds, todoId]);
     try {
       await deleteTodo(todoId);
-      setTodos(await getTodos());
+      setTodos(prevTodos => prevTodos.filter(todo => todo.id !== todoId));
     } catch (err) {
       setErrorMessage(ErrorMessage.DeleteError);
       throw err;
@@ -56,16 +68,6 @@ export const App: React.FC = () => {
       setTodoIdsToDel(prevIds => prevIds.filter(id => id !== todoId));
     }
   };
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setTodos(await getTodos());
-      } catch (err) {
-        setErrorMessage(ErrorMessage.LoadError);
-      }
-    })();
-  }, []);
 
   return (
     <div className="todoapp">
@@ -75,7 +77,8 @@ export const App: React.FC = () => {
         <TodosHeader
           addNewTodoHandler={addNewTodoHandler}
           setErrorMessage={setErrorMessage}
-          tempTodo={tempTodo}
+          isTempTodo={Boolean(tempTodo)}
+          todosLength={todos.length}
         />
 
         {!!todos.length && (

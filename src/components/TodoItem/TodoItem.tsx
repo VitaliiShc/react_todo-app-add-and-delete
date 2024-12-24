@@ -1,6 +1,6 @@
-import React from 'react';
-import { Todo } from '../../types/Todo';
+import { FC } from 'react';
 import classNames from 'classnames';
+import { Todo } from '../../types/Todo';
 
 type Props = {
   todo: Todo;
@@ -8,7 +8,7 @@ type Props = {
   deleteTodoHandler: (todoId: number) => Promise<void>;
 };
 
-export const TodoItem: React.FC<Props> = props => {
+export const TodoItem: FC<Props> = props => {
   const { todo, isLoading, deleteTodoHandler } = props;
 
   return (

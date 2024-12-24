@@ -1,14 +1,14 @@
-import React, { Dispatch, SetStateAction } from 'react';
-import { StatusFilter } from '../../types/StatusFilter';
-import { capitalizeString } from '../../utils/capitalizeString';
+import { FC, Dispatch, SetStateAction } from 'react';
 import classNames from 'classnames';
+import { capitalizeString } from '../../utils/capitalizeString';
+import { StatusFilter } from '../../types/StatusFilter';
 
 type Props = {
   filterValue: StatusFilter;
   setFilterValue: Dispatch<SetStateAction<StatusFilter>>;
 };
 
-export const TodoFilter: React.FC<Props> = props => {
+export const TodoFilter: FC<Props> = props => {
   const { filterValue, setFilterValue } = props;
 
   return (
